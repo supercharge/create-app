@@ -12,9 +12,7 @@
   </p>
   <br/>
   <p>
-    <a href="#installation"><strong>Installation</strong></a> ·
-    <a href="#Docs"><strong>Docs</strong></a> ·
-    <a href="#usage"><strong>Usage</strong></a>
+    <a href="#create-a-new-app"><strong>Create a new App</strong></a>
   </p>
   <br/>
   <br/>
