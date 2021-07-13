@@ -9,11 +9,15 @@
   "bin": {
     "create-supercharge-app": "dist/bin/run.js"
   },
-  "main": "dist",
+  "main": "dist/src",
   "types": "dist",
   "files": [
-    "dist"
+    "dist/bin",
+    "dist/src"
   ],
+  "dependencies": {
+    "@supercharge/cedar": "~1.0.0"
+  },
   "devDependencies": {
     "@supercharge/tsconfig": "~2.0.0",
     "@types/node": "~16.3.1",
