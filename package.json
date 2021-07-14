@@ -16,7 +16,8 @@
     "dist/src"
   ],
   "dependencies": {
-    "@supercharge/cedar": "~1.0.0"
+    "@supercharge/cedar": "~1.0.0",
+    "@supercharge/strings": "~1.18.0"
   },
   "devDependencies": {
     "@supercharge/tsconfig": "~2.0.0",
