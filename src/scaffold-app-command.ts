@@ -1,5 +1,6 @@
 'use strict'
 
+import Str from '@supercharge/strings'
 import { Command } from '@supercharge/cedar'
 
 export class ScaffoldCommand extends Command {
@@ -10,6 +11,11 @@ export class ScaffoldCommand extends Command {
     this
       .name('scaffold')
       .description('Scaffold a new Supercharge application')
+      .addArgument('app-name', builder => {
+        builder
+          .required()
+          .description('The directory name of your new Supercharge project ')
+      })
   }
 
   /**
@@ -17,5 +23,16 @@ export class ScaffoldCommand extends Command {
    */
   async run (): Promise<any> {
     this.io().info('TODO :)')
+  }
+
+  /**
+   * Returns the slugified application name.
+   *
+   * @returns {String}
+   */
+  appName (): string {
+    return Str(
+      this.argument('app-name')
+    ).slug().get()
   }
 }
