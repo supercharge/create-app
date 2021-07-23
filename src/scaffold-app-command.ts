@@ -5,6 +5,7 @@ import Fs from '@supercharge/fs'
 import Str from '@supercharge/strings'
 import { Command } from '@supercharge/cedar'
 import { RepoDownloader } from './repo-downloader'
+import { TarExtractor } from './tar-extractor'
 
 export class ScaffoldCommand extends Command {
   /**
@@ -72,6 +73,7 @@ export class ScaffoldCommand extends Command {
   private async scaffoldApplication (): Promise<void> {
     const file = await RepoDownloader.download(this.branch())
 
+    await TarExtractor.extract(file)
     await Fs.remove(file)
   }
 
