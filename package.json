@@ -24,6 +24,7 @@
   "devDependencies": {
     "@supercharge/tsconfig": "~2.0.0",
     "@types/node": "~16.4.1",
+    "@types/tar": "~4.0.5",
     "@typescript-eslint/eslint-plugin": "~4.28.4",
     "eslint": "~7.31.0",
     "eslint-config-standard-with-typescript": "~20.0.0",
