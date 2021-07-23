@@ -17,20 +17,22 @@
   ],
   "dependencies": {
     "@supercharge/cedar": "~1.0.0",
-    "@supercharge/strings": "~1.18.0"
+    "@supercharge/fs": "~3.2.0",
+    "@supercharge/strings": "~1.18.0",
+    "tar": "~6.1.0"
   },
   "devDependencies": {
     "@supercharge/tsconfig": "~2.0.0",
-    "@types/node": "~16.3.1",
-    "@typescript-eslint/eslint-plugin": "~4.28.3",
-    "eslint": "~7.30.0",
+    "@types/node": "~16.4.1",
+    "@typescript-eslint/eslint-plugin": "~4.28.4",
+    "eslint": "~7.31.0",
     "eslint-config-standard-with-typescript": "~20.0.0",
     "eslint-plugin-import": "~2.23.4",
     "eslint-plugin-node": "~11.1.0",
     "eslint-plugin-promise": "~5.1.0",
     "sinon": "~11.1.1",
     "tap": "~15.0.9",
-    "typescript": "~4.2.4"
+    "typescript": "~4.3.5"
   },
   "engines": {
     "node": ">= 12"
