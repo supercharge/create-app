@@ -3,4 +3,4 @@
 import { app } from '../src/index'
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
-app.run()
+app.run(['scaffold', ...process.argv.slice(2)])
