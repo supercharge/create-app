@@ -33,10 +33,13 @@ export class ScaffoldCommand extends Command {
    */
   async run (): Promise<any> {
     await this.ensureApplicationDoesntExist()
-
     await this.scaffoldApplication()
 
-    this.io().info('TODO :)')
+    // await this.installDependencies()
+    // await this.copyDotEnvFile()
+    // await this.generateAppKey()
+
+    this.io().success('SUCCESS', `${this.appName()} scaffolding successful. Enjoy!`)
   }
 
   /**
@@ -70,11 +73,17 @@ export class ScaffoldCommand extends Command {
     ).slug().get()
   }
 
+  /**
+   * Downloads the Supercharge application boilerplate as a .tar.gz file
+   * and extracts the downloaded archive into the defined directory.
+   */
   private async scaffoldApplication (): Promise<void> {
-    const file = await RepoDownloader.download(this.branch())
+    this.io().info('local file -> ' + this.localFile())
 
-    await TarExtractor.extract(file)
-    await Fs.remove(file)
+    await RepoDownloader.download(this.branch()).into(this.localFile())
+    await Fs.ensureDir(this.directory())
+    await TarExtractor.extract(this.localFile()).into(this.directory())
+    await Fs.remove(this.localFile())
   }
 
   /**
@@ -90,5 +99,14 @@ export class ScaffoldCommand extends Command {
     // return this.option('dev')
     //   ? 'develop'
     //   : 'main'
+  }
+
+  /**
+   * Returns the local path for the downloaded file.
+   *
+   * @returns {String}
+   */
+  private localFile (): string {
+    return `${this.directory()}.tar.gz`
   }
 }

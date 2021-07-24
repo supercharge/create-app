@@ -1,6 +1,5 @@
 'use strict'
 
-import Path from 'path'
 import Https from 'https'
 import Fs, { WriteStream } from '@supercharge/fs'
 
@@ -25,14 +24,24 @@ export class RepoDownloader {
   }
 
   /**
-   * Downloads the given `branch` of the Supercharge application
-   * boilerplate and returns the file path on the local disk
-   * where the scaffolded repository files are stored.
+   * Creates a pending repository download that needs to be
+   * started using the fluent `.into(target)` method.
    *
-   * @returns {String}
+   * @param {String} branch
+   *
+   * @returns {RepoDownloader}
    */
-  static async download (branch: string): Promise<string> {
-    return await new this(branch).fetch()
+  static download (branch: string): RepoDownloader {
+    return new this(branch)
+  }
+
+  /**
+   * Start downloading the repository as a .tar.gz file into the local `targetFile`.
+   *
+   * @param targetFile
+   */
+  async into (targetFile: string): Promise<void> {
+    await this.fetch(targetFile)
   }
 
   /**
@@ -45,34 +54,31 @@ export class RepoDownloader {
   }
 
   /**
-   * Returns the local path for the downloaded file.
-   *
-   * @returns {String}
-   */
-  private localFile (): string {
-    return Path.resolve(process.cwd(), `supercharge-${this.branch}.tar.gz`)
-  }
-
-  /**
    * Downloads the given `repository` and returns the file path
    * on the local disk where the repository is stored.
    *
    * @returns {String}
    */
-  async fetch (): Promise<string> {
-    let done = false
+  async fetch (targetFile: string): Promise<string> {
     let url = this.remoteFile()
 
     do {
-      const { finished, url: newUrl } = await this.download(url, this.localFile())
-      url = newUrl ?? ''
-      done = finished
-    } while (!done)
+      const { redirectTo } = await this.download(url, targetFile)
+      url = redirectTo ?? ''
+    } while (url)
 
-    return this.localFile()
+    return targetFile
   }
 
-  private async download (url: string, targetFile: string): Promise<{ finished: boolean, url?: string}> {
+  /**
+   * Downloads the repository from the remote server to a local file.
+   *
+   * @param {String} url
+   * @param {String} targetFile
+   *
+   * @returns {Object}
+   */
+  private async download (url: string, targetFile: string): Promise<{ redirectTo?: string}> {
     return await new Promise((resolve, reject) => {
       Https.get(url, response => {
         const code = response.statusCode ?? 0
@@ -84,11 +90,11 @@ export class RepoDownloader {
         const fileWriter = this
           .createWriterFor(targetFile)
           .on('finish', () => {
-            resolve({ finished: true })
+            resolve({})
           })
 
         if (code > 300 && code < 400 && !!response.headers.location) {
-          return resolve({ finished: false, url: response.headers.location })
+          return resolve({ redirectTo: response.headers.location })
         }
 
         response.pipe(fileWriter)
