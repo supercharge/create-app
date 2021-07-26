@@ -2,10 +2,14 @@
 
 import Path from 'path'
 import Fs from '@supercharge/fs'
+import { promisify } from 'util'
 import Str from '@supercharge/strings'
+import ChildProcess from 'child_process'
 import { Command } from '@supercharge/cedar'
 import { RepoDownloader } from './repo-downloader'
 import { TarExtractor } from './tar-extractor'
+
+const exec = promisify(ChildProcess.exec)
 
 export class ScaffoldCommand extends Command {
   /**
@@ -32,14 +36,18 @@ export class ScaffoldCommand extends Command {
    * Run the scaffold command.
    */
   async run (): Promise<any> {
-    await this.ensureApplicationDoesntExist()
-    await this.scaffoldApplication()
+    try {
+      await this.ensureApplicationDoesntExist()
+      await this.scaffoldApplication()
+      await this.cleanBoilerplate()
 
-    // await this.installDependencies()
-    // await this.copyDotEnvFile()
-    // await this.generateAppKey()
-
-    this.io().success('SUCCESS', `${this.appName()} scaffolding successful. Enjoy!`)
+      await this.installDependencies()
+      // await this.copyDotEnvFile()
+      // await this.generateAppKey()
+      this.printSuccessMessage()
+    } catch (error) {
+      this.io().fail(' WOOPS ', error.message)
+    }
   }
 
   /**
@@ -51,6 +59,8 @@ export class ScaffoldCommand extends Command {
     if (await Fs.exists(this.directory())) {
       throw new Error(`A directory "${this.appName()}" already exists.`)
     }
+
+    this.check('Application directory available')
   }
 
   /**
@@ -78,12 +88,37 @@ export class ScaffoldCommand extends Command {
    * and extracts the downloaded archive into the defined directory.
    */
   private async scaffoldApplication (): Promise<void> {
-    this.io().info('local file -> ' + this.localFile())
-
     await RepoDownloader.download(this.branch()).into(this.localFile())
     await Fs.ensureDir(this.directory())
     await TarExtractor.extract(this.localFile()).into(this.directory())
-    await Fs.remove(this.localFile())
+    await Fs.removeFile(this.localFile())
+
+    this.check(`Created your new Supercharge project inside the "${this.appName()}" directory`)
+  }
+
+  /**
+   * Personalize the Supercharge application boilerplate by resetting the Readme.md file.
+   */
+  private async cleanBoilerplate (): Promise<void> {
+    const readme = Path.resolve(this.directory(), 'README.md')
+
+    await Fs.removeFile(readme)
+    await Fs.ensureFile(readme)
+    await Fs.append(readme, `# ${this.appName()}`)
+    await Fs.appendLine(readme, 'Enjoy developing!')
+
+    this.check('Created empty "README.md')
+  }
+
+  /**
+   * Personalize the Supercharge application boilerplate by resetting the Readme.md file.
+   */
+  private async installDependencies (): Promise<void> {
+    this.io().info('Installing dependencies')
+
+    await exec('npm install', { cwd: this.directory() })
+
+    this.check('Installed dependencies')
   }
 
   /**
@@ -108,5 +143,31 @@ export class ScaffoldCommand extends Command {
    */
   private localFile (): string {
     return `${this.directory()}.tar.gz`
+  }
+
+  /**
+   * Print the success message and instructors after bootstrapping a new application.
+   */
+  private printSuccessMessage (): void {
+    this.io()
+      .blankLine()
+      .log('--------------------------------------------------------------------------------------------------')
+      .blankLine()
+      .success(`Your Supercharge application was installed successfully into the "${this.appName()}" directory`)
+      .blankLine()
+      .info('Run "npm run dev" to start the local HTTP dev server')
+  }
+
+  /**
+   * Print a success message with the `CHECK` tag to the terminal.
+   *
+   * @param {String} message
+   *
+   * @returns {this}
+   */
+  private check (message: string): this {
+    this.io().success(' CHECK ', message)
+
+    return this
   }
 }
