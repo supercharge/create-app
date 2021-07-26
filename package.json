@@ -17,13 +17,13 @@
   ],
   "dependencies": {
     "@supercharge/cedar": "~1.0.0",
-    "@supercharge/fs": "~3.2.0",
+    "@supercharge/fs": "~3.3.0",
     "@supercharge/strings": "~1.18.0",
-    "tar": "~6.1.0"
+    "tar": "~6.1.1"
   },
   "devDependencies": {
     "@supercharge/tsconfig": "~2.0.0",
-    "@types/node": "~16.4.1",
+    "@types/node": "~16.4.3",
     "@types/tar": "~4.0.5",
     "@typescript-eslint/eslint-plugin": "~4.28.4",
     "eslint": "~7.31.0",
