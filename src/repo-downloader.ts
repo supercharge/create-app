@@ -3,7 +3,7 @@
 import Https from 'https'
 import Fs, { WriteStream } from '@supercharge/fs'
 
-export class RepoDownloader {
+export class RepositoryDownloader {
   /**
    * Stores the repository name.
    */
@@ -29,9 +29,9 @@ export class RepoDownloader {
    *
    * @param {String} branch
    *
-   * @returns {RepoDownloader}
+   * @returns {RepositoryDownloader}
    */
-  static download (branch: string): RepoDownloader {
+  static download (branch: string): RepositoryDownloader {
     return new this(branch)
   }
 
