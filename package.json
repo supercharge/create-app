@@ -16,7 +16,7 @@
     "dist/src"
   ],
   "dependencies": {
-    "@supercharge/cedar": "~1.1.0",
+    "@supercharge/cedar": "~1.2.0",
     "@supercharge/fs": "~3.3.0",
     "@supercharge/strings": "~1.19.0",
     "tar": "~6.1.2"
