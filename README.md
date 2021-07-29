@@ -11,10 +11,6 @@
     Scaffold a new Supercharge application with one command
   </p>
   <br/>
-  <p>
-    <a href="#scaffold-a-new-supercharge-app"><strong>Create a new App</strong></a>
-  </p>
-  <br/>
   <br/>
   <p>
     <a href="https://www.npmjs.com/package/@supercharge/create-app"><img src="https://img.shields.io/npm/v/@supercharge/create-app.svg" alt="Latest Version"></a>
@@ -30,13 +26,11 @@
 ## Create a Supercharge App
 This is the entrypoint to scaffold a new Supercharge application. This repository follows the requirements of [npm init](https://docs.npmjs.com/cli/v6/commands/npm-init) to simply initialize a project using a single command.
 
-
-## Scaffold a new Supercharge App
-The following command creates a `your-app-name` directory in your current working directory and scaffolds a new Supercharge application inside of that folder:
-
 ```
 npm init @supercharge/app your-app-name
 ```
+
+This command creates a `your-app-name` directory in your current working directory and scaffolds a new Supercharge application inside of that folder:
 
 
 ## Contributing
