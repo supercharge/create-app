@@ -94,7 +94,7 @@ export class ScaffoldCommand extends Command {
 
     this
       .logMessage(`Application available in the "${this.appName()}" directory`)
-      .check('Scaffolding done')
+      .check('App created')
   }
 
   /**
@@ -123,7 +123,7 @@ export class ScaffoldCommand extends Command {
   private async cleanBoilerplate (): Promise<void> {
     const readme = Path.resolve(this.directory(), 'README.md')
 
-    await this.task('Creating empty "README.md created', async () => {
+    await this.task('Creating empty "README.md', async () => {
       await Fs.removeFile(readme)
       await Fs.ensureFile(readme)
       await Fs.append(readme, `# ${this.appName()}`)
@@ -132,14 +132,14 @@ export class ScaffoldCommand extends Command {
   }
 
   private async setupApplication (): Promise<void> {
-    this.start('App setup')
+    this.start('Running app setup')
 
     await this.installDependencies()
     // await this.copyDotEnvFile()
     // await this.generateAppKey()
 
     this
-      .check('App is ready')
+      .check('Setup complete')
   }
 
   /**
