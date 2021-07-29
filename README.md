@@ -5,14 +5,14 @@
   <br/>
   <br/>
   <p>
-    <h3>Create Supercharge App</h3>
+    <h3>Create a Supercharge App</h3>
   </p>
   <p>
     Scaffold a new Supercharge application with one command
   </p>
   <br/>
   <p>
-    <a href="#create-a-new-app"><strong>Create a new App</strong></a>
+    <a href="#scaffold-a-new-supercharge-app"><strong>Create a new App</strong></a>
   </p>
   <br/>
   <br/>
@@ -27,11 +27,12 @@
 ---
 
 
-## Create Supercharge App
+## Create a Supercharge App
 This is the entrypoint to scaffold a new Supercharge application. This repository follows the requirements of [npm init](https://docs.npmjs.com/cli/v6/commands/npm-init) to simply initialize a project using a single command.
 
 
-## Create a new App
+## Scaffold a new Supercharge App
+The following command creates a `your-app-name` directory in your current working directory and scaffolds a new Supercharge application inside of that folder:
 
 ```
 npm init @supercharge/app your-app-name
@@ -39,17 +40,13 @@ npm init @supercharge/app your-app-name
 
 
 ## Contributing
-Do you miss a function? We very much appreciate your contribution! Please send in a pull request 😊
+We appreciate your contribution! Have an idea what we can add to this application? Please send in a pull request 😊
 
 1.  Create a fork
 2.  Create your feature branch: `git checkout -b my-feature`
 3.  Commit your changes: `git commit -am 'Add some feature'`
 4.  Push to the branch: `git push origin my-new-feature`
 5.  Submit a pull request 🚀
-
-
-## License
-Supercharge is [MIT licensed](https://github.com/supercharge/framework/blob/2.x/LICENSE).
 
 ---
 
