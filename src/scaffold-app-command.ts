@@ -6,8 +6,8 @@ import { promisify } from 'util'
 import Str from '@supercharge/strings'
 import ChildProcess from 'child_process'
 import { Command } from '@supercharge/cedar'
-import { RepoDownloader } from './repo-downloader'
 import { TarExtractor } from './tar-extractor'
+import { RepositoryDownloader } from './repo-downloader'
 
 const exec = promisify(ChildProcess.exec)
 
@@ -64,10 +64,12 @@ export class ScaffoldCommand extends Command {
   /**
    * Returns the directory name which will be created when scaffolding the application.
    *
+   * @param {String|String[]} path
+   *
    * @returns {String}
    */
-  private directory (): string {
-    return Path.resolve(process.cwd(), this.appName())
+  private directory (...path: string[]): string {
+    return Path.resolve(process.cwd(), this.appName(), ...path)
   }
 
   /**
@@ -98,16 +100,19 @@ export class ScaffoldCommand extends Command {
   }
 
   /**
-   *
+   * Download the application boilerplate as a .tar.gz file
+   * for the selected source branch. Save the boilerplate
+   * archive into the defined local file for extraction.
    */
   private async downloadRepository (): Promise<void> {
     await this.task('Downloading boilerplate', async () => {
-      await RepoDownloader.download(this.branch()).into(this.localFile())
+      await RepositoryDownloader.download(this.branch()).into(this.localFile())
     })
   }
 
   /**
-   *
+   * Extract the downloaded repository archive (.tar.gz)
+   * into the desired application target directory.
    */
   private async extractRepository (): Promise<void> {
     await this.task('Extracting boilerplate archive', async () => {
@@ -135,15 +140,15 @@ export class ScaffoldCommand extends Command {
     this.start('Running app setup')
 
     await this.installDependencies()
-    // await this.copyDotEnvFile()
-    // await this.generateAppKey()
+    await this.copyDotEnvFile()
+    await this.generateAppKey()
+    // await this.setDatabaseName()
 
-    this
-      .check('Setup complete')
+    this.check('Setup complete')
   }
 
   /**
-   * Personalize the Supercharge application boilerplate by resetting the Readme.md file.
+   * Install the NPM dependencies for the created application.
    */
   private async installDependencies (): Promise<void> {
     await this.task('Installing dependencies', async () => {
@@ -152,18 +157,35 @@ export class ScaffoldCommand extends Command {
   }
 
   /**
+   * Copy the `.env.eample` file over to a `.env`.
+   */
+  private async copyDotEnvFile (): Promise<void> {
+    await this.task('Creating .env file', async () => {
+      await Fs.copyFile(
+        this.directory('.env.example'),
+        this.directory('.env')
+      )
+    })
+  }
+
+  /**
+   * Generate an application key.
+   */
+  private async generateAppKey (): Promise<void> {
+    // await this.task('Generating app key', async () => {
+    //   await exec('ts-node craft.ts key:generate')
+    // })
+  }
+
+  /**
    * Returns the branch name which should be downloaded.
    *
    * @returns {String}
    */
   private branch (): string {
-    // TODO currently hardcoded to 'develop'
-    // change this when tagging the Supercharge 2.0 release
-    return 'develop'
-
-    // return this.option('dev')
-    //   ? 'develop'
-    //   : 'main'
+    return this.option('dev')
+      ? 'develop'
+      : 'main'
   }
 
   /**
@@ -184,31 +206,51 @@ export class ScaffoldCommand extends Command {
       .blankLine()
       .success(`Your Supercharge application was installed successfully into the "${this.appName()}" directory`)
       .blankLine()
-      .success(' RUN ', '"npm run dev" to start the local HTTP dev server')
+      .success(' RUN ', `${this.io().colors().magenta('npm run dev')} to start the local HTTP dev server`)
       .blankLine()
       .log('--------------------------------------------------------------------------------------------------')
   }
 
-  private createTaskTitleFor (title: string): string {
-    return `    ${this.io().colors().magenta('==>')}  ${title}`
-  }
-
+  /**
+   * Log the given `message` as a task step to the terminal.
+   *
+   * @param {String} message
+   *
+   * @returns {ScaffoldCommand}
+   */
   private logMessage (message: string): this {
     this.io().log(
-      this.createTaskTitleFor(message)
+      this.createMessageFor(message)
     )
 
     return this
   }
 
+  /**
+   * Create and run a task for the given `title` and `action` function.
+   *
+   * @param {String} title
+   * @param {Function} action
+   */
   private async task (title: string, action: Function): Promise<void> {
-    await this.io().withSpinner(this.createTaskTitleFor(title), async () => {
+    await this.io().withSpinner(this.createMessageFor(title), async () => {
       await action()
     })
   }
 
   /**
+   * Create a task message for the given `title`.
    *
+   * @param {String} title
+   *
+   * @returns {String}
+   */
+  private createMessageFor (title: string): string {
+    return `    ${this.io().colors().magenta('==>')}  ${title}`
+  }
+
+  /**
+   * Print a start message to the terminal using the 'START' tag.
    *
    * @param {String} message
    *
@@ -221,7 +263,7 @@ export class ScaffoldCommand extends Command {
   }
 
   /**
-   * Print a success message with the `CHECK` tag to the terminal.
+   * Print a success message to the terminal using the `CHECK` tag.
    *
    * @param {String} message
    *
