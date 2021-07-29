@@ -58,7 +58,7 @@ export class ScaffoldCommand extends Command {
       throw new Error(`A directory "${this.appName()}" already exists.`)
     }
 
-    this.check(`Directory "${this.appName()}" available`)
+    this.check(`Making sure the "${this.appName()}" directory does not exist`)
   }
 
   /**
