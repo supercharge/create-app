@@ -39,14 +39,12 @@ export class ScaffoldCommand extends Command {
     try {
       await this.ensureApplicationDoesntExist()
       await this.scaffoldApplication()
-      await this.cleanBoilerplate()
+      await this.setupApplication()
 
-      await this.installDependencies()
-      // await this.copyDotEnvFile()
-      // await this.generateAppKey()
       this.printSuccessMessage()
     } catch (error) {
-      this.io().fail(' WOOPS ', error.message)
+      this.io().fail(' WOOPS ', 'Bootstrapping your Supercharge app failed')
+      this.io().error(error)
     }
   }
 
@@ -60,7 +58,7 @@ export class ScaffoldCommand extends Command {
       throw new Error(`A directory "${this.appName()}" already exists.`)
     }
 
-    this.check('Application directory available')
+    this.check(`Directory "${this.appName()}" available`)
   }
 
   /**
@@ -88,12 +86,35 @@ export class ScaffoldCommand extends Command {
    * and extracts the downloaded archive into the defined directory.
    */
   private async scaffoldApplication (): Promise<void> {
-    await RepoDownloader.download(this.branch()).into(this.localFile())
-    await Fs.ensureDir(this.directory())
-    await TarExtractor.extract(this.localFile()).into(this.directory())
-    await Fs.removeFile(this.localFile())
+    this.start('Creating application')
 
-    this.check(`Created your new Supercharge project inside the "${this.appName()}" directory`)
+    await this.downloadRepository()
+    await this.extractRepository()
+    await this.cleanBoilerplate()
+
+    this
+      .logMessage(`Application available in the "${this.appName()}" directory`)
+      .check('Scaffolding done')
+  }
+
+  /**
+   *
+   */
+  private async downloadRepository (): Promise<void> {
+    await this.task('Downloading boilerplate', async () => {
+      await RepoDownloader.download(this.branch()).into(this.localFile())
+    })
+  }
+
+  /**
+   *
+   */
+  private async extractRepository (): Promise<void> {
+    await this.task('Extracting boilerplate archive', async () => {
+      await Fs.ensureDir(this.directory())
+      await TarExtractor.extract(this.localFile()).into(this.directory())
+      await Fs.removeFile(this.localFile())
+    })
   }
 
   /**
@@ -102,23 +123,32 @@ export class ScaffoldCommand extends Command {
   private async cleanBoilerplate (): Promise<void> {
     const readme = Path.resolve(this.directory(), 'README.md')
 
-    await Fs.removeFile(readme)
-    await Fs.ensureFile(readme)
-    await Fs.append(readme, `# ${this.appName()}`)
-    await Fs.appendLine(readme, 'Enjoy developing!')
+    await this.task('Creating empty "README.md created', async () => {
+      await Fs.removeFile(readme)
+      await Fs.ensureFile(readme)
+      await Fs.append(readme, `# ${this.appName()}`)
+      await Fs.appendLine(readme, 'Enjoy developing!')
+    })
+  }
 
-    this.check('Created empty "README.md')
+  private async setupApplication (): Promise<void> {
+    this.start('App setup')
+
+    await this.installDependencies()
+    // await this.copyDotEnvFile()
+    // await this.generateAppKey()
+
+    this
+      .check('App is ready')
   }
 
   /**
    * Personalize the Supercharge application boilerplate by resetting the Readme.md file.
    */
   private async installDependencies (): Promise<void> {
-    this.io().info('Installing dependencies')
-
-    await exec('npm install', { cwd: this.directory() })
-
-    this.check('Installed dependencies')
+    await this.task('Installing dependencies', async () => {
+      await exec('npm install', { cwd: this.directory() })
+    })
   }
 
   /**
@@ -150,12 +180,44 @@ export class ScaffoldCommand extends Command {
    */
   private printSuccessMessage (): void {
     this.io()
-      .blankLine()
       .log('--------------------------------------------------------------------------------------------------')
       .blankLine()
       .success(`Your Supercharge application was installed successfully into the "${this.appName()}" directory`)
       .blankLine()
-      .info('Run "npm run dev" to start the local HTTP dev server')
+      .success(' RUN ', '"npm run dev" to start the local HTTP dev server')
+      .blankLine()
+      .log('--------------------------------------------------------------------------------------------------')
+  }
+
+  private createTaskTitleFor (title: string): string {
+    return `    ${this.io().colors().magenta('==>')}  ${title}`
+  }
+
+  private logMessage (message: string): this {
+    this.io().log(
+      this.createTaskTitleFor(message)
+    )
+
+    return this
+  }
+
+  private async task (title: string, action: Function): Promise<void> {
+    await this.io().withSpinner(this.createTaskTitleFor(title), async () => {
+      await action()
+    })
+  }
+
+  /**
+   *
+   *
+   * @param {String} message
+   *
+   * @returns {this}
+   */
+  private start (message: string): this {
+    this.io().hint(' START ', message)
+
+    return this
   }
 
   /**
@@ -166,7 +228,7 @@ export class ScaffoldCommand extends Command {
    * @returns {this}
    */
   private check (message: string): this {
-    this.io().success(' CHECK ', message)
+    this.io().success(' CHECK ', message).blankLine()
 
     return this
   }
