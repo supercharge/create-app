@@ -27,6 +27,15 @@ export class TarExtractor {
    * @param directory
    */
   async into (directory: string): Promise<void> {
-    await Tar.extract({ file: this.file, strip: 1, cwd: directory })
+    await Tar.extract({
+      /**
+       * This `strip` configuration removes one level from the archive path
+       * removing a temporary directory path. Removing this path extracts
+       * the `file` content directly into the given target `directory`.
+       */
+      strip: 1,
+      cwd: directory,
+      file: this.file
+    })
   }
 }
