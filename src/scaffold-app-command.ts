@@ -44,7 +44,7 @@ export class ScaffoldCommand extends Command {
       this.printSuccessMessage()
     } catch (error) {
       this.io().fail(' WOOPS ', 'Bootstrapping your Supercharge app failed')
-      this.io().error(error)
+      throw error
     }
   }
 
