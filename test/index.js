@@ -20,7 +20,7 @@ test('Create Supercharge App', async t => {
 
   await scaffoldApp([appName])
 
-  t.ok(await Fs.pathExists(appRoot))
+  t.ok(await Fs.exists(appRoot))
   t.ok(terminateStub.calledWith())
 
   await Fs.removeDir(appRoot)
