@@ -12,13 +12,18 @@ function generateAppName () {
 }
 
 test('Create Supercharge App', async t => {
-  t.setTimeout(60000)
+  t.ok(typeof scaffoldApp === 'function')
+})
+
+test('Create Supercharge App', async t => {
+  t.setTimeout(30000)
 
   const appName = generateAppName()
   const appRoot = Path.resolve(process.cwd(), appName)
   const terminateStub = Sinon.stub(app, 'terminate').returns()
 
-  await scaffoldApp([appName])
+  // await scaffoldApp([appName])
+  await app.run(['scaffold', appName])
 
   t.ok(await Fs.exists(appRoot))
   t.ok(terminateStub.calledWith())
