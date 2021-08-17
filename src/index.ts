@@ -3,8 +3,10 @@
 import { Application } from '@supercharge/cedar'
 import { ScaffoldCommand } from './scaffold-app-command'
 
+export { ScaffoldCommand }
+
 /**
- * Run the CLI command to scaffold a new Supercharge application.
+ * Prepare the CLI application by adding the scaffold command.
  */
 export const app = new Application().add(
   new ScaffoldCommand()
