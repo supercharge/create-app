@@ -8,7 +8,7 @@ const Str = require('@supercharge/strings')
 const { app, scaffoldApp, ScaffoldCommand } = require('../dist/src')
 
 function generateAppName () {
-  return `test-supercharge-app-${Str.random(4)}`
+  return `test-supercharge-app-${Str.random(4)}`.toLowerCase()
 }
 
 test('Create Supercharge App', async t => {
