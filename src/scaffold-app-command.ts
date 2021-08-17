@@ -53,7 +53,7 @@ export class ScaffoldCommand extends Command {
    *
    * @throws
    */
-  private async ensureApplicationDoesntExist (): Promise<void> {
+  async ensureApplicationDoesntExist (): Promise<void> {
     if (await Fs.exists(this.directory())) {
       throw new Error(`A directory "${this.appName()}" already exists.`)
     }
@@ -68,7 +68,7 @@ export class ScaffoldCommand extends Command {
    *
    * @returns {String}
    */
-  private directory (...path: string[]): string {
+  directory (...path: string[]): string {
     return Path.resolve(process.cwd(), this.appName(), ...path)
   }
 
@@ -77,7 +77,7 @@ export class ScaffoldCommand extends Command {
    *
    * @returns {String}
    */
-  private appName (): string {
+  appName (): string {
     return Str(
       this.argument('app-name')
     ).slug().get()
@@ -87,7 +87,7 @@ export class ScaffoldCommand extends Command {
    * Downloads the Supercharge application boilerplate as a .tar.gz file
    * and extracts the downloaded archive into the defined directory.
    */
-  private async scaffoldApplication (): Promise<void> {
+  async scaffoldApplication (): Promise<void> {
     this.start('Creating application')
 
     await this.downloadRepository()
@@ -104,7 +104,7 @@ export class ScaffoldCommand extends Command {
    * for the selected source branch. Save the boilerplate
    * archive into the defined local file for extraction.
    */
-  private async downloadRepository (): Promise<void> {
+  async downloadRepository (): Promise<void> {
     await this.task('Downloading boilerplate', async () => {
       await RepositoryDownloader.download(this.branch()).into(this.localFile())
     })
@@ -114,7 +114,7 @@ export class ScaffoldCommand extends Command {
    * Extract the downloaded repository archive (.tar.gz)
    * into the desired application target directory.
    */
-  private async extractRepository (): Promise<void> {
+  async extractRepository (): Promise<void> {
     await this.task('Extracting boilerplate archive', async () => {
       await Fs.ensureDir(this.directory())
       await TarExtractor.extract(this.localFile()).into(this.directory())
@@ -125,7 +125,7 @@ export class ScaffoldCommand extends Command {
   /**
    * Personalize the Supercharge application boilerplate by resetting the Readme.md file.
    */
-  private async cleanBoilerplate (): Promise<void> {
+  async cleanBoilerplate (): Promise<void> {
     const readme = Path.resolve(this.directory(), 'README.md')
 
     await this.task('Creating empty "README.md', async () => {
@@ -136,7 +136,7 @@ export class ScaffoldCommand extends Command {
     })
   }
 
-  private async setupApplication (): Promise<void> {
+  async setupApplication (): Promise<void> {
     this.start('Running app setup')
 
     await this.installDependencies()
@@ -150,7 +150,7 @@ export class ScaffoldCommand extends Command {
   /**
    * Install the NPM dependencies for the created application.
    */
-  private async installDependencies (): Promise<void> {
+  async installDependencies (): Promise<void> {
     await this.task('Installing dependencies', async () => {
       await exec('npm install', { cwd: this.directory() })
     })
@@ -159,7 +159,7 @@ export class ScaffoldCommand extends Command {
   /**
    * Copy the `.env.eample` file over to a `.env`.
    */
-  private async copyDotEnvFile (): Promise<void> {
+  async copyDotEnvFile (): Promise<void> {
     await this.task('Creating .env file', async () => {
       await Fs.copyFile(
         this.directory('.env.example'),
@@ -171,7 +171,7 @@ export class ScaffoldCommand extends Command {
   /**
    * Generate an application key.
    */
-  private async generateAppKey (): Promise<void> {
+  async generateAppKey (): Promise<void> {
     // await this.task('Generating app key', async () => {
     //   await exec('ts-node craft.ts key:generate')
     // })
@@ -182,7 +182,7 @@ export class ScaffoldCommand extends Command {
    *
    * @returns {String}
    */
-  private branch (): string {
+  branch (): string {
     return this.option('dev')
       ? 'develop'
       : 'main'
@@ -193,14 +193,14 @@ export class ScaffoldCommand extends Command {
    *
    * @returns {String}
    */
-  private localFile (): string {
+  localFile (): string {
     return `${this.directory()}.tar.gz`
   }
 
   /**
    * Print the success message and instructors after bootstrapping a new application.
    */
-  private printSuccessMessage (): void {
+  printSuccessMessage (): void {
     this.io()
       .log('--------------------------------------------------------------------------------------------------')
       .blankLine()
@@ -218,7 +218,7 @@ export class ScaffoldCommand extends Command {
    *
    * @returns {ScaffoldCommand}
    */
-  private logMessage (message: string): this {
+  logMessage (message: string): this {
     this.io().log(
       this.createMessageFor(message)
     )
@@ -232,7 +232,7 @@ export class ScaffoldCommand extends Command {
    * @param {String} title
    * @param {Function} action
    */
-  private async task (title: string, action: Function): Promise<void> {
+  async task (title: string, action: Function): Promise<void> {
     await this.io().withSpinner(this.createMessageFor(title), async () => {
       await action()
     })
@@ -245,7 +245,7 @@ export class ScaffoldCommand extends Command {
    *
    * @returns {String}
    */
-  private createMessageFor (title: string): string {
+  createMessageFor (title: string): string {
     return `    ${this.io().colors().magenta('==>')}  ${title}`
   }
 
@@ -256,7 +256,7 @@ export class ScaffoldCommand extends Command {
    *
    * @returns {this}
    */
-  private start (message: string): this {
+  start (message: string): this {
     this.io().hint(' START ', message)
 
     return this
@@ -269,7 +269,7 @@ export class ScaffoldCommand extends Command {
    *
    * @returns {this}
    */
-  private check (message: string): this {
+  check (message: string): this {
     this.io().success(' CHECK ', message).blankLine()
 
     return this
