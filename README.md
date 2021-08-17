@@ -24,9 +24,9 @@
 
 
 ## Create a Supercharge App
-This is the entrypoint to scaffold a new Supercharge application. This repository follows the requirements of [npm init](https://docs.npmjs.com/cli/v6/commands/npm-init) to simply initialize a project using a single command.
+This is the entrypoint to scaffold a new Supercharge application. This repository follows the requirements of [npm init](https://docs.npmjs.com/cli/v7/commands/npm-init) to simply initialize a project using a single command:
 
-```
+```bash
 npm init @supercharge/app your-app-name
 ```
 
