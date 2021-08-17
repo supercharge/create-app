@@ -22,8 +22,7 @@ test('Create Supercharge App', async t => {
   const appRoot = Path.resolve(process.cwd(), appName)
   const terminateStub = Sinon.stub(app, 'terminate').returns()
 
-  // await scaffoldApp([appName])
-  await app.run(['scaffold', appName])
+  await scaffoldApp([appName])
 
   t.ok(await Fs.exists(appRoot))
   t.ok(terminateStub.calledWith())
