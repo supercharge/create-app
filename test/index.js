@@ -16,7 +16,7 @@ test('Create Supercharge App', async t => {
 })
 
 test('Create Supercharge App', async t => {
-  t.setTimeout(30000)
+  t.setTimeout(60000)
 
   const appName = generateAppName()
   const appRoot = Path.resolve(process.cwd(), appName)
