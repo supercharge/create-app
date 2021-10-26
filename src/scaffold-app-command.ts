@@ -128,7 +128,7 @@ export class ScaffoldCommand extends Command {
   async cleanBoilerplate (): Promise<void> {
     const readme = Path.resolve(this.appDirectory(), 'README.md')
 
-    await this.task('Creating empty "README.md', async () => {
+    await this.task('Creating empty "README.md" file', async () => {
       await Fs.removeFile(readme)
       await Fs.ensureFile(readme)
       await Fs.append(readme, `# ${this.appName()}`)
