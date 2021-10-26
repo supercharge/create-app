@@ -54,7 +54,7 @@ export class ScaffoldCommand extends Command {
    * @throws
    */
   async ensureApplicationDoesntExist (): Promise<void> {
-    if (await Fs.exists(this.directory())) {
+    if (await Fs.exists(this.appDirectory())) {
       throw new Error(`A directory "${this.appName()}" already exists.`)
     }
 
@@ -68,7 +68,7 @@ export class ScaffoldCommand extends Command {
    *
    * @returns {String}
    */
-  directory (...path: string[]): string {
+  appDirectory (...path: string[]): string {
     return Path.resolve(process.cwd(), this.appName(), ...path)
   }
 
@@ -116,8 +116,8 @@ export class ScaffoldCommand extends Command {
    */
   async extractRepository (): Promise<void> {
     await this.task('Extracting boilerplate archive', async () => {
-      await Fs.ensureDir(this.directory())
-      await TarExtractor.extract(this.localFile()).into(this.directory())
+      await Fs.ensureDir(this.appDirectory())
+      await TarExtractor.extract(this.localFile()).into(this.appDirectory())
       await Fs.removeFile(this.localFile())
     })
   }
@@ -126,7 +126,7 @@ export class ScaffoldCommand extends Command {
    * Personalize the Supercharge application boilerplate by resetting the Readme.md file.
    */
   async cleanBoilerplate (): Promise<void> {
-    const readme = Path.resolve(this.directory(), 'README.md')
+    const readme = Path.resolve(this.appDirectory(), 'README.md')
 
     await this.task('Creating empty "README.md', async () => {
       await Fs.removeFile(readme)
@@ -152,7 +152,7 @@ export class ScaffoldCommand extends Command {
    */
   async installDependencies (): Promise<void> {
     await this.task('Installing dependencies', async () => {
-      await exec('npm install', { cwd: this.directory() })
+      await exec('npm install', { cwd: this.appDirectory() })
     })
   }
 
@@ -162,8 +162,8 @@ export class ScaffoldCommand extends Command {
   async copyDotEnvFile (): Promise<void> {
     await this.task('Creating .env file', async () => {
       await Fs.copyFile(
-        this.directory('.env.example'),
-        this.directory('.env')
+        this.appDirectory('.env.example'),
+        this.appDirectory('.env')
       )
     })
   }
@@ -194,7 +194,7 @@ export class ScaffoldCommand extends Command {
    * @returns {String}
    */
   localFile (): string {
-    return `${this.directory()}.tar.gz`
+    return `${this.appDirectory()}.tar.gz`
   }
 
   /**
