@@ -2,51 +2,53 @@
 
 const Path = require('path')
 const Sinon = require('sinon')
-const { test } = require('tap')
+const { test } = require('uvu')
+const expect = require('expect')
 const Fs = require('@supercharge/fs')
 const Str = require('@supercharge/strings')
+const timeout = require('./helpers/timeout')
 const { app, scaffoldApp, ScaffoldCommand } = require('../dist/src')
 
 function generateAppName () {
   return `test-supercharge-app-${Str.random(4)}`.toLowerCase()
 }
 
-test('Create Supercharge App', async t => {
-  t.ok(typeof scaffoldApp === 'function')
+test('Create Supercharge App', async () => {
+  expect(typeof scaffoldApp === 'function').toBe(true)
 })
 
-test('Create Supercharge App', async t => {
-  t.setTimeout(60000)
-
+test('Create Supercharge App', timeout(60, async () => {
   const appName = generateAppName()
   const appRoot = Path.resolve(process.cwd(), appName)
   const terminateStub = Sinon.stub(app, 'terminate').returns()
 
   await scaffoldApp([appName])
 
-  t.ok(await Fs.exists(appRoot))
-  t.ok(terminateStub.calledWith())
+  expect(await Fs.exists(appRoot)).toBe(true)
+  expect(terminateStub.calledWith()).toBe(true)
 
   await Fs.removeDir(appRoot)
   terminateStub.restore()
-})
+}))
 
-test('throws when the app directory already exists', async t => {
+test('throws when the app directory already exists', async () => {
   const appName = generateAppName()
   const appRoot = Path.resolve(process.cwd(), appName)
 
-  t.ok(await Fs.notExists(appRoot))
+  expect(await Fs.notExists(appRoot)).toBe(true)
   await Fs.ensureDir(appRoot)
 
   const command = new ScaffoldCommand()
   const appNameStub = Sinon.stub(command, 'appName').returns(appName)
-  const appDirectoryStub = Sinon.stub(command, 'directory').returns(appRoot)
+  const appDirectoryStub = Sinon.stub(command, 'appDirectory').returns(appRoot)
 
-  await t.rejects(async () => {
-    await command.run()
-  }, new Error(`A directory "${appName}" already exists.`))
+  await expect(
+    command.run()
+  ).rejects.toEqual(new Error(`A directory "${appName}" already exists.`))
 
   await Fs.removeDir(appRoot)
   appDirectoryStub.restore()
   appNameStub.restore()
 })
+
+test.run()
