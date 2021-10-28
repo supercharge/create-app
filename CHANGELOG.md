@@ -8,6 +8,7 @@
 
 ### Updated
 - fix `repository.url` in `package.json`
+- replace `tap` test suite with `uvu` and `c8`
 
 
 ## 1.0.0 - 2021-08-17
