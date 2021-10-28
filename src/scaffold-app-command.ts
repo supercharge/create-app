@@ -88,6 +88,8 @@ export class ScaffoldCommand extends Command {
    * and extracts the downloaded archive into the defined directory.
    */
   async scaffoldApplication (): Promise<void> {
+    this.check(`Using branch "${this.branch()}" for the application`)
+
     this.start('Creating application')
 
     await this.downloadRepository()
