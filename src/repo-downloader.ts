@@ -87,15 +87,15 @@ export class RepositoryDownloader {
           return reject(new Error(response.statusMessage))
         }
 
+        if (code > 300 && code < 400 && !!response.headers.location) {
+          return resolve({ redirectTo: response.headers.location })
+        }
+
         const fileWriter = this
           .createWriterFor(targetFile)
           .on('finish', () => {
             resolve({})
           })
-
-        if (code > 300 && code < 400 && !!response.headers.location) {
-          return resolve({ redirectTo: response.headers.location })
-        }
 
         response.pipe(fileWriter)
       }).on('error', error => {
