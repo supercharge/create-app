@@ -1,6 +1,12 @@
 # Changelog
 
 
+## [1.2.0](https://github.com/supercharge/strings/compare/v1.1.0...v1.2.0) - 2022-xx-xx
+
+### Updated
+- use `@supercharge/eslint-config-typescript`
+
+
 ## [1.1.0](https://github.com/supercharge/strings/compare/v1.0.0...v1.1.0) - 2021-10-28
 
 ### Added
