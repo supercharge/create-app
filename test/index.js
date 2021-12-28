@@ -13,7 +13,7 @@ function generateAppName () {
   return `test-supercharge-app-${Str.random(4)}`.toLowerCase()
 }
 
-test('Create Supercharge App', async () => {
+test('exports scaffoldApp is a function', async () => {
   expect(typeof scaffoldApp === 'function').toBe(true)
 })
 
