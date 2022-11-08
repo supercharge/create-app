@@ -3,21 +3,23 @@
 const Path = require('path')
 const Sinon = require('sinon')
 const { test } = require('uvu')
-const expect = require('expect')
+const { expect } = require('expect')
 const Fs = require('@supercharge/fs')
 const Str = require('@supercharge/strings')
-const timeout = require('./helpers/timeout')
+const { timeout } = require('./helpers/timeout')
 const { app, scaffoldApp, ScaffoldCommand } = require('../dist/src')
 
 function generateAppName () {
-  return `test-supercharge-app-${Str.random(4)}`.toLowerCase()
+  return `test-supercharge-app-${Str.random(use => {
+    use.characters().length(4)
+  })}`.toLowerCase()
 }
 
 test('exports scaffoldApp is a function', async () => {
   expect(typeof scaffoldApp === 'function').toBe(true)
 })
 
-test('Create Supercharge App', timeout(60, async () => {
+test('Create Supercharge App', timeout('60s', async () => {
   const appName = generateAppName()
   const appRoot = Path.resolve(process.cwd(), appName)
   const terminateStub = Sinon.stub(app, 'terminate').returns()
@@ -31,7 +33,7 @@ test('Create Supercharge App', timeout(60, async () => {
   terminateStub.restore()
 }))
 
-test('throws when the app directory already exists', async () => {
+test.only('throws when the app directory already exists', async () => {
   const appName = generateAppName()
   const appRoot = Path.resolve(process.cwd(), appName)
 
